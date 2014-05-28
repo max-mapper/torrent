@@ -17,6 +17,7 @@ if (!argv.path) argv.path = process.cwd()
 
 var dl = torrent(source, argv)
 
+var hs;
 
 dl.on('hotswap', function() {
   hs++
@@ -26,7 +27,7 @@ dl.on('ready', function() {
   console.log(dl.files.length.toString(), 'file(s) in torrent')
   console.log(dl.files.map(function(f){ return f.name.trim() }).join('\n'))
 
-  var hs = 0
+  hs = 0
 
   var status = function() {
     var down = bytes(dl.swarm.downloaded)
@@ -40,7 +41,7 @@ dl.on('ready', function() {
       'Uploaded '+up+ ' ('+upSpeed+')\n'
     )
   }
-  
+
   var interval = setInterval(status, 500)
   status()
 })
