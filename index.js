@@ -1,5 +1,4 @@
 var fs = require('fs')
-var mkdirp = require('mkdirp')
 var torrents = require('torrent-stream')
 var path = require('path')
 
