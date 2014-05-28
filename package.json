@@ -1,7 +1,9 @@
 {
   "name": "torrent",
   "version": "1.0.0",
-  "bin": "cli.js",
+  "bin": {
+    "torrent": "cli.js"
+  },
   "description": "torrent from the command line",
   "main": "index.js",
   "author": "max ogden",
@@ -13,5 +15,17 @@
     "read-torrent": "^1.0.0",
     "single-line-log": "^0.4.0",
     "torrent-stream": "^0.11.1"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maxogden/torrent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/maxogden/torrent/issues"
+  },
+  "homepage": "https://github.com/maxogden/torrent"
 }
