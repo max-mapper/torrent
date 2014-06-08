@@ -20,7 +20,11 @@ torrent create <directory OR file> {-o outfile.torrent}
 
 torrent info <torrent file>
 
-  Print information about a torrent file to stdout as JSON.
+  Print information about a .torrent file to stdout as JSON.
+
+torrent ls <torrent file>
+
+  List all the files in a .torrent file.
 
 ```
 
