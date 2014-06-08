@@ -1,0 +1,13 @@
+usage:
+
+  torrent <magnet link OR path to .torrent file>
+
+    Download a torrent from a magnet link to torrent file.
+
+  torrent create <directory OR file> {-o outfile.torrent}
+
+    Create a torrent file from a directory or file.
+ 
+    If an output file isn't specified with `-o`, the torrent file will be
+    written to stdout.
+

@@ -17,7 +17,9 @@ var source = argv._.shift()
 if (source === 'create') {
   var dir = argv._.shift()
   var outfile = argv.outfile
-  if (fs.existsSync(outfile)) {
+  if (outfile === '-') outfile = null
+
+  if (outfile && fs.existsSync(outfile)) {
     console.error('refusing to overwrite existing torrent file')
     process.exit(1)
   }
