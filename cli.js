@@ -6,10 +6,40 @@ var log = require('single-line-log').stdout
 var bytes = require('pretty-bytes')
 
 var torrent = require('./')
+var createTorrent = require('create-torrent')
 
-var argv = minimist(process.argv.slice(2))
+var argv = minimist(process.argv.slice(2), {
+  alias: { outfile: 'o' }
+})
 
-var source = argv._[0]
+var source = argv._.shift()
+
+if (source === 'create') {
+  var dir = argv._.shift()
+  var outfile = argv.outfile
+  if (fs.existsSync(outfile)) {
+    console.error('refusing to overwrite existing torrent file')
+    process.exit(1)
+  }
+
+  createTorrent(dir, function (err, torrent) {
+    if (err) {
+      console.error(err.stack)
+      process.exit(1)
+    }
+    else if (outfile) {
+      fs.writeFile(outfile, torrent, function (err) {
+        if (err) {
+          console.error(err.stack)
+          process.exit(1)
+        }
+      })
+    }
+    else process.stdout.write(torrent)
+  })
+
+  return
+}
 
 if (source.indexOf('.torrent') > -1) source = fs.readFileSync(source)
 
