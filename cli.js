@@ -6,10 +6,103 @@ var log = require('single-line-log').stdout
 var bytes = require('pretty-bytes')
 
 var torrent = require('./')
+var createTorrent = require('create-torrent')
+var parseTorrent = require('parse-torrent')
+var concat = require('concat-stream')
+var humanSize = require('human-format')
 
-var argv = minimist(process.argv.slice(2))
+var argv = minimist(process.argv.slice(2), {
+  alias: { outfile: 'o' }
+})
 
-var source = argv._[0]
+if (argv.help || argv._.length === 0) {
+  fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout)
+  return
+}
+
+var source = argv._.shift()
+
+if (source === 'create') {
+  var dir = argv._.shift()
+  var outfile = argv.outfile
+  if (outfile === '-') outfile = null
+
+  if (outfile && fs.existsSync(outfile)) {
+    console.error('refusing to overwrite existing torrent file')
+    process.exit(1)
+  }
+
+  createTorrent(dir, function (err, torrent) {
+    if (err) {
+      console.error(err.stack)
+      process.exit(1)
+    }
+    else if (outfile) {
+      fs.writeFile(outfile, torrent, function (err) {
+        if (err) {
+          console.error(err.stack)
+          process.exit(1)
+        }
+      })
+    }
+    else process.stdout.write(torrent)
+  })
+
+  return
+} else if (source === 'info') {
+  var infile = argv._.shift()
+  getInfo(infile, function (parsed) {
+    delete parsed.infoBuffer
+    delete parsed.info.pieces
+    console.log(JSON.stringify(toString(parsed), null, 2))
+ 
+    function toString (obj) {
+      if (Array.isArray(obj)) {
+        return obj.map(toString)
+      } else if (Buffer.isBuffer(obj)) {
+        return obj.toString('utf8')
+      } else if (typeof obj === 'object') {
+        return Object.keys(obj).reduce(function (acc, key) {
+          acc[key] = toString(obj[key])
+          return acc
+        }, {})
+      }
+      else return obj
+    }
+  })
+  return
+} else if (source === 'ls' || source === 'list') {
+  var infile = argv._.shift()
+  getInfo(infile, function (parsed) {
+    parsed.files.forEach(function (file) {
+      var prefix = '';
+      if (argv.s && argv.h) {
+        prefix = humanSize(file.length).replace(/(\d)B$/, '$1 B')
+        prefix = Array(10-prefix.length).join(' ') + prefix + ' '
+      } else if (argv.s) {
+        prefix = String(file.length)
+        prefix = Array(10-prefix.length).join(' ') + prefix + ' '
+      }
+      console.log(prefix + file.path)
+    })
+  })
+  return
+}
+
+function getInfo (infile, cb) {
+  var instream = !infile || infile === '-'
+    ? process.stdin
+    : fs.createReadStream(infile)
+  instream.pipe(concat(function (body) {
+    try {
+      var parsed = parseTorrent(body)
+    } catch (err) {
+      console.error(err.stack)
+      process.exit(1)
+    }
+    cb(parsed)
+  }))
+}
 
 if (source.indexOf('.torrent') > -1) source = fs.readFileSync(source)
 

@@ -8,7 +8,32 @@ Download torrents from the command line
 
 ```
 torrent <magnet link OR path to .torrent file>
+
+  Download a torrent from a magnet link to torrent file.
+
+torrent create <directory OR file> {-o outfile.torrent}
+
+  Create a torrent file from a directory or file.
+
+  If an output file isn't specified with `-o`, the torrent file will be
+  written to stdout.
+
+torrent info <torrent file>
+
+  Print information about a .torrent file to stdout as JSON.
+
+torrent ls OPTIONS <torrent file>
+
+  List all the files in a .torrent file.
+
+  OPTIONS are like the `ls` command:
+
+    -s  Show file sizes in bytes alongside file paths.
+    -h  Show file sizes in human units when `-s` is on.
+
 ```
+
+### download a torrent
 
 e.g. to download ubuntu 14.04 ISO
 
@@ -31,4 +56,13 @@ ubuntu-14.04.iso
 Connected to 35/37 peers
 Downloaded 5.47 MB (1.09 MB/s) with 0 hotswaps
 Uploaded 0 B (0 B/s)
+```
+
+### create a torrent
+
+You can create a torrent file with `torrent create`:
+
+```
+mkdir xyz; echo beep > xyz/a.txt; echo boop > xyz/b.txt
+torrent create xyz/ -o xyz.torrent
 ```
