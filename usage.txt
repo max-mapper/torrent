@@ -13,7 +13,12 @@ torrent info <torrent file>
 
   Print information about a .torrent file to stdout as JSON.
 
-torrent ls <torrent file>
+torrent ls OPTIONS <torrent file>
 
   List all the files in a .torrent file.
+
+  OPTIONS are like the `ls` command:
+
+    -s  Show file sizes in bytes alongside file paths.
+    -h  Show file sizes in human units when `-s` is on.
 

@@ -9,12 +9,13 @@ var torrent = require('./')
 var createTorrent = require('create-torrent')
 var parseTorrent = require('parse-torrent')
 var concat = require('concat-stream')
+var humanSize = require('human-format')
 
 var argv = minimist(process.argv.slice(2), {
-  alias: { outfile: 'o', help: 'h' }
+  alias: { outfile: 'o' }
 })
 
-if (argv.help) {
+if (argv.help || argv._.length === 0) {
   fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout)
   return
 }
@@ -74,7 +75,15 @@ if (source === 'create') {
   var infile = argv._.shift()
   getInfo(infile, function (parsed) {
     parsed.files.forEach(function (file) {
-      console.log(file.path)
+      var prefix = '';
+      if (argv.s && argv.h) {
+        prefix = humanSize(file.length).replace(/(\d)B$/, '$1 B')
+        prefix = Array(10-prefix.length).join(' ') + prefix + ' '
+      } else if (argv.s) {
+        prefix = String(file.length)
+        prefix = Array(10-prefix.length).join(' ') + prefix + ' '
+      }
+      console.log(prefix + file.path)
     })
   })
   return

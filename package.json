@@ -15,7 +15,8 @@
     "torrent-stream": "^0.11.1",
     "create-torrent": "^1.1.0",
     "parse-torrent": "^1.3.0",
-    "concat-stream": "^1.4.6"
+    "concat-stream": "^1.4.6",
+    "human-format": "^0.1.3"
   },
   "devDependencies": {},
   "repository": {
