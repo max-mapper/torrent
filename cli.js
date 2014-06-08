@@ -7,6 +7,8 @@ var bytes = require('pretty-bytes')
 
 var torrent = require('./')
 var createTorrent = require('create-torrent')
+var parseTorrent = require('parse-torrent')
+var concat = require('concat-stream')
 
 var argv = minimist(process.argv.slice(2), {
   alias: { outfile: 'o', help: 'h' }
@@ -45,6 +47,38 @@ if (source === 'create') {
     else process.stdout.write(torrent)
   })
 
+  return
+}
+else if (source === 'info') {
+  var infile = argv._.shift()
+  var instream = !infile || infile === '-'
+    ? process.stdin
+    : fs.createReadStream(infile)
+  instream.pipe(concat(function (body) {
+    try {
+      var parsed = parseTorrent(body)
+    } catch (err) {
+      console.error(err.stack)
+      process.exit(1)
+    }
+    delete parsed.infoBuffer
+    delete parsed.info.pieces
+    console.log(JSON.stringify(toString(parsed), null, 2))
+ 
+    function toString (obj) {
+      if (Array.isArray(obj)) {
+        return obj.map(toString)
+      } else if (Buffer.isBuffer(obj)) {
+        return obj.toString('utf8')
+      } else if (typeof obj === 'object') {
+        return Object.keys(obj).reduce(function (acc, key) {
+          acc[key] = toString(obj[key])
+          return acc
+        }, {})
+      }
+      else return obj
+    }
+  }))
   return
 }
 
