@@ -9,8 +9,13 @@ var torrent = require('./')
 var createTorrent = require('create-torrent')
 
 var argv = minimist(process.argv.slice(2), {
-  alias: { outfile: 'o' }
+  alias: { outfile: 'o', help: 'h' }
 })
+
+if (argv.help) {
+  fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout)
+  return
+}
 
 var source = argv._.shift()
 
