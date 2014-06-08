@@ -48,19 +48,9 @@ if (source === 'create') {
   })
 
   return
-}
-else if (source === 'info') {
+} else if (source === 'info') {
   var infile = argv._.shift()
-  var instream = !infile || infile === '-'
-    ? process.stdin
-    : fs.createReadStream(infile)
-  instream.pipe(concat(function (body) {
-    try {
-      var parsed = parseTorrent(body)
-    } catch (err) {
-      console.error(err.stack)
-      process.exit(1)
-    }
+  getInfo(infile, function (parsed) {
     delete parsed.infoBuffer
     delete parsed.info.pieces
     console.log(JSON.stringify(toString(parsed), null, 2))
@@ -78,8 +68,31 @@ else if (source === 'info') {
       }
       else return obj
     }
-  }))
+  })
   return
+} else if (source === 'ls' || source === 'list') {
+  var infile = argv._.shift()
+  getInfo(infile, function (parsed) {
+    parsed.files.forEach(function (file) {
+      console.log(file.path)
+    })
+  })
+  return
+}
+
+function getInfo (infile, cb) {
+  var instream = !infile || infile === '-'
+    ? process.stdin
+    : fs.createReadStream(infile)
+  instream.pipe(concat(function (body) {
+    try {
+      var parsed = parseTorrent(body)
+    } catch (err) {
+      console.error(err.stack)
+      process.exit(1)
+    }
+    cb(parsed)
+  }))
 }
 
 if (source.indexOf('.torrent') > -1) source = fs.readFileSync(source)
