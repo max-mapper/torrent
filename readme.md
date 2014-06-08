@@ -18,6 +18,10 @@ torrent create <directory OR file> {-o outfile.torrent}
   If an output file isn't specified with `-o`, the torrent file will be
   written to stdout.
 
+torrent info <torrent file>
+
+  Print information about a torrent file to stdout as JSON.
+
 ```
 
 ### download a torrent
