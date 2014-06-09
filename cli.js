@@ -75,7 +75,7 @@ if (source === 'create') {
   var infile = argv._.shift()
   getInfo(infile, function (parsed) {
     parsed.files.forEach(function (file) {
-      var prefix = '';
+      var prefix = ''
       if (argv.s && argv.h) {
         prefix = humanSize(file.length).replace(/(\d)B$/, '$1 B')
         prefix = Array(10-prefix.length).join(' ') + prefix + ' '
@@ -110,7 +110,7 @@ if (!argv.path) argv.path = process.cwd()
 
 var dl = torrent(source, argv)
 
-var hs;
+var hs
 
 dl.on('hotswap', function() {
   hs++
