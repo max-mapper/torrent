@@ -116,18 +116,10 @@ if (!argv.path) argv.path = process.cwd()
 
 var dl = torrent(source, argv)
 
-var hs;
-
-dl.on('hotswap', function() {
-  hs++
-})
-
 dl.on('ready', function() {
   var fileCount = dl.files.length
   console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
   console.log(dl.files.map(function(f){ return f.name.trim() }).join('\n'))
-
-  hs = 0
 
   var status = function() {
     var down = bytes(dl.swarm.downloaded)
@@ -137,7 +129,7 @@ dl.on('ready', function() {
 
     log(
       'Connected to '+dl.swarm.wires.reduce(notChoked, 0)+'/'+dl.swarm.wires.length+' peers\n'+
-      'Downloaded '+down+' ('+downSpeed+') with '+hs+' hotswaps\n'+
+      'Downloaded '+down+' ('+downSpeed+')\n'+
       'Uploaded '+up+ ' ('+upSpeed+')\n'
     )
   }
