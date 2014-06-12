@@ -5,6 +5,7 @@ var fs = require('fs')
 var log = require('single-line-log').stdout
 var bytes = require('pretty-bytes')
 
+var pkg = require('./package.json')
 var torrent = require('./')
 var createTorrent = require('create-torrent')
 var parseTorrent = require('parse-torrent')
@@ -14,6 +15,11 @@ var humanSize = require('human-format')
 var argv = minimist(process.argv.slice(2), {
   alias: { outfile: 'o' }
 })
+
+if (argv.version) {
+  console.log(pkg.version)
+  return;
+}
 
 if (argv.help || argv._.length === 0) {
   fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout)
@@ -55,7 +61,7 @@ if (source === 'create') {
     delete parsed.infoBuffer
     delete parsed.info.pieces
     console.log(JSON.stringify(toString(parsed), null, 2))
- 
+
     function toString (obj) {
       if (Array.isArray(obj)) {
         return obj.map(toString)
@@ -117,7 +123,8 @@ dl.on('hotswap', function() {
 })
 
 dl.on('ready', function() {
-  console.log(dl.files.length.toString(), 'file(s) in torrent')
+  var fileCount = dl.files.length
+  console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
   console.log(dl.files.map(function(f){ return f.name.trim() }).join('\n'))
 
   hs = 0
