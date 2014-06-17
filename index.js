@@ -7,9 +7,9 @@ module.exports = function (source, opts) {
 
   engine.on('ready', function () {
     engine.files.forEach(function(file) {
-      file.select();
-    });
-  });
+      file.select()
+    })
+  })
 
-  return engine;
-};
+  return engine
+}
