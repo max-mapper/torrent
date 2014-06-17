@@ -60,7 +60,7 @@ if (source === 'create') {
     console.log(JSON.stringify(toString(parsed), null, 2))
 
     function toString (obj) {
-  
+
       if (Array.isArray(obj)) {
         return obj.map(toString)
       } else if (Buffer.isBuffer(obj)) {
@@ -110,7 +110,6 @@ var dl = torrent(source, argv)
 
 dl.on('ready', function () {
   var fileCount = dl.files.length
-  console.log(dl)
   console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
   console.log(dl.files.map(function(f){return f.name.trim() }).join('\n'))
 
