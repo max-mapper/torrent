@@ -133,10 +133,11 @@ dl.on('ready', function() {
 
     if (percentage > 100) { percentage = 100 }
 
-    for (i=0; i<bars; i++) {
+    for (i = 0; i < bars; i++) {
       progressBar = progressBar + '='
     }
-    progressBar = progressBar + Array(20 + 1 - progressBar.length).join(' ');
+    
+    progressBar = progressBar + Array(20 + 1 - progressBar.length).join(' ')
 
     log(
       'Connected to '+dl.swarm.wires.reduce(notChoked, 0)+'/'+dl.swarm.wires.length+' peers\n'+
@@ -146,7 +147,6 @@ dl.on('ready', function() {
       'Complete: '+ percentage+'%\n'+
       '['+progressBar+']\n'+
       '0%    25   50   75   100%'
-
     )
   }
 
