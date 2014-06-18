@@ -126,11 +126,27 @@ dl.on('ready', function() {
     var downSpeed = bytes(dl.swarm.downloadSpeed()) +'/s'
     var up = bytes(dl.swarm.uploaded)
     var upSpeed = bytes(dl.swarm.uploadSpeed()) +'/s'
+    var torrentSize = dl.torrent.length
+    var percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
+    var progressBar = ''
+    var bars = ~~((percentage) / 5)
+
+    if (percentage > 100) { percentage = 100 }
+
+    for (i=0; i<bars; i++) {
+      progressBar = progressBar + '='
+    }
+    progressBar = progressBar + Array(20 + 1 - progressBar.length).join(' ');
 
     log(
       'Connected to '+dl.swarm.wires.reduce(notChoked, 0)+'/'+dl.swarm.wires.length+' peers\n'+
       'Downloaded '+down+' ('+downSpeed+')\n'+
-      'Uploaded '+up+ ' ('+upSpeed+')\n'
+      'Uploaded '+up+ ' ('+upSpeed+')\n'+
+      'Torrent Size '+bytes(torrentSize)+'\n\n'+
+      'Complete: '+ percentage+'%\n'+
+      '['+progressBar+']\n'+
+      '0%    25   50   75   100%'
+
     )
   }
 
@@ -141,4 +157,3 @@ dl.on('ready', function() {
 function notChoked(result, wire) {
   return result + (wire.peerChoking ? 0 : 1)
 }
-
