@@ -4,6 +4,8 @@
 
 Download torrents from the command line
 
+![](screenshot.png)
+
 ## usage
 
 ```
