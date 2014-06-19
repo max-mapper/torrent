@@ -118,6 +118,7 @@ var dl = torrent(source, argv)
 
 dl.on('ready', function() {
   var fileCount = dl.files.length
+  var timeStart = (new Date()).getTime()
   console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
   console.log(dl.files.map(function(f){ return f.name.trim() }).join('\n'))
 
@@ -127,16 +128,32 @@ dl.on('ready', function() {
     var up = bytes(dl.swarm.uploaded)
     var upSpeed = bytes(dl.swarm.uploadSpeed()) +'/s'
     var torrentSize = dl.torrent.length
+    var bytesRemaining = torrentSize - dl.swarm.downloaded
     var percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
     var progressBar = ''
     var bars = ~~((percentage) / 5)
+
+    // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
+    if (dl.swarm.downloaded > 0) {
+      if (dl.swarm.downloadSpeed() > 0) {
+        var minutes = 1000 * 60;
+        var timeNow = (new Date()).getTime()
+        var timeElapsed = timeNow - timeStart
+        var timeRemaining = (((timeElapsed / dl.swarm.downloaded) * bytesRemaining) / minutes).toPrecision(4)
+        timeRemaining = 'Estimated ' + timeRemaining + ' minutes remaining'
+      } else {
+        timeRemaining = 'Unknown time remaining'
+      }
+    } else {
+      timeRemaining = "Calculating"
+    }
 
     if (percentage > 100) { percentage = 100 }
 
     for (i = 0; i < bars; i++) {
       progressBar = progressBar + '='
     }
-    
+
     progressBar = progressBar + Array(20 + 1 - progressBar.length).join(' ')
 
     log(
@@ -146,7 +163,7 @@ dl.on('ready', function() {
       'Torrent Size '+bytes(torrentSize)+'\n\n'+
       'Complete: '+ percentage+'%\n'+
       '['+progressBar+']\n'+
-      '0%    25   50   75   100%'
+      '0%    25   50   75   100%\n\n'+timeRemaining
     )
   }
 
