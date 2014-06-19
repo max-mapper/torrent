@@ -11,6 +11,7 @@ var createTorrent = require('create-torrent')
 var parseTorrent = require('parse-torrent')
 var concat = require('concat-stream')
 var humanSize = require('human-format')
+var prettySeconds = require('pretty-seconds')
 
 var argv = minimist(process.argv.slice(2), {
   alias: { outfile: 'o' }
@@ -136,11 +137,11 @@ dl.on('ready', function() {
     // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
     if (dl.swarm.downloaded > 0) {
       if (dl.swarm.downloadSpeed() > 0) {
-        var minutes = 1000 * 60;
+        var seconds = 1000;
         var timeNow = (new Date()).getTime()
         var timeElapsed = timeNow - timeStart
-        var timeRemaining = (((timeElapsed / dl.swarm.downloaded) * bytesRemaining) / minutes).toPrecision(4)
-        timeRemaining = 'Estimated ' + timeRemaining + ' minutes remaining'
+        var timeRemaining = (((timeElapsed / dl.swarm.downloaded) * bytesRemaining) / seconds).toPrecision(6)
+        timeRemaining = 'Estimated ' + prettySeconds(~~timeRemaining) + ' remaining'
       } else {
         timeRemaining = 'Unknown time remaining'
       }
@@ -163,7 +164,7 @@ dl.on('ready', function() {
       'Torrent Size '+bytes(torrentSize)+'\n\n'+
       'Complete: '+ percentage+'%\n'+
       '['+progressBar+']\n'+
-      '0%    25   50   75   100%\n\n'+timeRemaining
+      '0%    25   50   75   100%\n\n'+timeRemaining + '\n'
     )
   }
 
