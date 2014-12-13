@@ -97,6 +97,7 @@ if (source === 'create') {
 } else if (source === 'seed') {
   var infile = argv._.shift()
   var filename = infile
+  if (!argv.path) argv.path = process.cwd()
   if (infile.indexOf('.torrent') > -1) infile = fs.readFileSync(infile)
   var dl = torrent(infile, argv)
   dl.on('ready', function() {
@@ -104,7 +105,7 @@ if (source === 'create') {
       log(
         'Seeding ' + filename + '\n' +
         'Connected to '+dl.swarm.wires.reduce(notChoked, 0)+'/'+dl.swarm.wires.length+' peers\n'+
-        'Uploaded ' + bytes(dl.swarm.downloaded) + ' ('+ bytes(dl.swarm.uploadSpeed()) +')\n'
+        'Uploaded ' + bytes(dl.swarm.uploaded) + ' ('+ bytes(dl.swarm.uploadSpeed()) +')\n'
       )
     }
     setInterval(status, 1000)
