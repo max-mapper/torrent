@@ -113,7 +113,7 @@ if (source === 'create') {
   })
   dl.listen(0)
 } else {
-  if (source.indexOf('.torrent') > -1) source = fs.readFileSync(source)
+  if (source.indexOf('.torrent') > -1 && !/^magnet/.test(source)) source = fs.readFileSync(source)
 
   if (!argv.path) argv.path = process.cwd()
 
