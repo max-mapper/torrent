@@ -101,6 +101,15 @@ if (source === 'create') {
   if (infile.indexOf('.torrent') > -1) infile = fs.readFileSync(infile)
   var dl = torrent(infile, argv)
   dl.on('ready', function() {
+    var seeding = dl.torrent.pieces.every(function(piece, i) {
+      return dl.bitfield.get(i)
+    })
+    if (!seeding) {
+      console.error('Missing files!')
+      process.exit(1)
+    } else {
+      console.log('Verified files successfully!')
+    }
     function status() {
       log(
         'Seeding ' + filename + '\n' +
@@ -120,6 +129,12 @@ if (source === 'create') {
   var dl = torrent(source, argv)
 
   dl.on('ready', function() {
+    
+    if (argv.peer) {
+      console.log('connecting to peer', argv.peer)
+      dl.connect(argv.peer)
+    }
+    
     var fileCount = dl.files.length
     var timeStart = (new Date()).getTime()
     console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
