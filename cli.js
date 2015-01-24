@@ -27,6 +27,8 @@ if (argv.help || argv._.length === 0) {
   return
 }
 
+if (argv.quiet) log = function() {}
+
 var source = argv._.shift()
 
 if (source === 'create') {
