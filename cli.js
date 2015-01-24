@@ -40,8 +40,16 @@ if (source === 'create') {
     console.error('refusing to overwrite existing torrent file')
     process.exit(1)
   }
+  
+  var opts = {}
+  if (argv.tracker) {
+    if (typeof argv.tracker === 'string') opts.announceList = [[argv.tracker]]
+    else opts.announceList = argv.tracker.map(function(t) { return [t] })
+  }
 
-  createTorrent(dir, function (err, torrent) {
+  opts.urlList = argv.urlList
+
+  createTorrent(dir, opts, function (err, torrent) {
     if (err) {
       console.error(err.stack)
       process.exit(1)
@@ -124,7 +132,7 @@ if (source === 'create') {
   })
   dl.listen(0)
 } else {
-  if (source.indexOf('.torrent') > -1 && !/^magnet/.test(source)) source = fs.readFileSync(source)
+  if (source.indexOf('.torrent') > -1) source = fs.readFileSync(source)
 
   if (!argv.path) argv.path = process.cwd()
 
