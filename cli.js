@@ -108,7 +108,7 @@ if (source === 'create') {
   var infile = argv._.shift()
   var filename = infile
   if (!argv.path) argv.path = process.cwd()
-  if (infile.indexOf('.torrent') > -1) infile = fs.readFileSync(infile)
+  if (source.indexOf('.torrent') > -1 && !/^magnet/.test(source)) source = fs.readFileSync(source)
   var dl = torrent(infile, argv)
   dl.on('ready', function() {
     var seeding = dl.torrent.pieces.every(function(piece, i) {
