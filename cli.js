@@ -108,8 +108,13 @@ if (source === 'create') {
   var infile = argv._.shift()
   var filename = infile
   if (!argv.path) argv.path = process.cwd()
-  if (source.indexOf('.torrent') > -1 && !/^magnet/.test(source)) source = fs.readFileSync(source)
-  var dl = torrent(infile, argv)
+  var body
+  if (!/^magnet:/.test(infile)) {
+    body = fs.readFileSync(infile)
+  }
+  else body = infile
+ 
+  var dl = torrent(body, argv)
   dl.on('ready', function() {
     var seeding = dl.torrent.pieces.every(function(piece, i) {
       return dl.bitfield.get(i)
