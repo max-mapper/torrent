@@ -181,7 +181,10 @@ if (source === 'create') {
         timeRemaining = "Calculating"
       }
 
-      if (percentage > 100) { percentage = 100 }
+      if (percentage > 100) { 
+        percentage = 100;
+        process.exit(1);
+      }
 
       for (i = 0; i < bars; i++) {
         progressBar = progressBar + '='
