@@ -183,6 +183,7 @@ if (source === 'create') {
 
       if (percentage > 100) { 
         percentage = 100;
+        console.log('Download complete for'+filename+' Downloaded '+ dl.swarm.downloaded +' in '+ timeElapsed + '\n');
         process.exit(1);
       }
 
