@@ -216,7 +216,7 @@ function getSource (infile, cb) {
 }
 
 function getInfo (infile, cb) {
-  getSource(function (body) {
+  getSource(infile, function (body) {
     try {
       var parsed = parseTorrent(body)
     } catch (err) {
