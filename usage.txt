@@ -1,28 +1,13 @@
-torrent <magnet link OR path to .torrent file>
+torrent - a pure javascript torrent program
 
-  Download a torrent from a magnet link to torrent file.
+Commands:
 
-torrent create <directory OR file> {-o outfile.torrent}
+torrent            <magnet link OR path to .torrent file>
+torrent create     <directory OR file> {-o outfile.torrent}
+torrent seed       <magnet link OR path to .torrent file>
+torrent info       <magnet link OR path to .torrent file>
+torrent ls         <magnet link OR path to .torrent file>
 
-  Create a torrent file from a directory or file.
-
-  If an output file isn't specified with `-o`, the torrent file will be
-  written to stdout.
-
-torrent seed <torrent file>
-
-  Seed a torrent file.
-
-torrent info <torrent file>
-
-  Print information about a .torrent file to stdout as JSON.
-
-torrent ls OPTIONS <torrent file>
-
-  List all the files in a .torrent file.
-
-  OPTIONS are like the `ls` command:
-
-    -s  Show file sizes in bytes alongside file paths.
-    -h  Show file sizes in human units when `-s` is on.
-
+options for the ls command:
+  -s  Show file sizes in bytes alongside file paths.
+  -h  Show file sizes in human units when `-s` is on.

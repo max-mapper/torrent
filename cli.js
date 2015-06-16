@@ -22,7 +22,7 @@ if (argv.version) {
   return
 }
 
-if (argv.help) {
+if (argv.help || argv._.length === 0) {
   fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout)
   return
 }
