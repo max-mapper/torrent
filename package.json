@@ -1,6 +1,6 @@
 {
   "name": "torrent",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "bin": {
     "torrent": "cli.js"
   },
