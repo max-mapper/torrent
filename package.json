@@ -7,7 +7,7 @@
   "description": "torrent from the command line",
   "main": "index.js",
   "author": "max ogden",
-  "license": "BSD",
+  "license": "BSD-3-Clause",
   "preferGlobal": true,
   "dependencies": {
     "concat-stream": "^1.4.6",
