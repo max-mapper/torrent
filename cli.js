@@ -19,15 +19,15 @@ var argv = minimist(process.argv.slice(2), {
 
 if (argv.version) {
   console.log(pkg.version)
-  return
+  process.exit(0)
 }
 
 if (argv.help || argv._.length === 0) {
-  fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout)
-  return
+  console.log(fs.readFileSync(__dirname + '/usage.txt', 'utf-8'))
+  process.exit(0)
 }
 
-if (argv.quiet) log = function() {}
+if (argv.quiet) log = function () {}
 
 var source = argv._.shift()
 
@@ -44,7 +44,7 @@ if (source === 'create') {
   var opts = {}
   if (argv.tracker) {
     if (typeof argv.tracker === 'string') opts.announceList = [[argv.tracker]]
-    else opts.announceList = argv.tracker.map(function(t) { return [t] })
+    else opts.announceList = argv.tracker.map(function (t) { return [t] })
   }
 
   opts.urlList = argv.urlList
@@ -53,19 +53,17 @@ if (source === 'create') {
     if (err) {
       console.error(err.stack)
       process.exit(1)
-    }
-    else if (outfile) {
+    } else if (outfile) {
       fs.writeFile(outfile, torrent, function (err) {
         if (err) {
           console.error(err.stack)
           process.exit(1)
         }
       })
+    } else {
+      process.stdout.write(torrent)
     }
-    else process.stdout.write(torrent)
   })
-
-  return
 } else if (source === 'info') {
   var infile = argv._.shift()
   getInfo(infile, function (parsed) {
@@ -87,31 +85,29 @@ if (source === 'create') {
       else return obj
     }
   })
-  return
 } else if (source === 'ls' || source === 'list') {
   var infile = argv._.shift()
   getInfo(infile, function (parsed) {
     parsed.files.forEach(function (file) {
-      var prefix = '';
+      var prefix = ''
       if (argv.s && argv.h) {
         prefix = humanSize(file.length).replace(/(\d)B$/, '$1 B')
-        prefix = Array(10-prefix.length).join(' ') + prefix + ' '
+        prefix = Array(10 - prefix.length).join(' ') + prefix + ' '
       } else if (argv.s) {
         prefix = String(file.length)
-        prefix = Array(10-prefix.length).join(' ') + prefix + ' '
+        prefix = Array(10 - prefix.length).join(' ') + prefix + ' '
       }
       console.log(prefix + file.path)
     })
   })
-  return
 } else if (source === 'seed') {
   var infile = argv._.shift()
   var filename = infile
   if (!argv.path) argv.path = process.cwd()
   getSource(infile, function (body) {
     var dl = torrent(body, argv)
-    dl.on('ready', function() {
-      var seeding = dl.torrent.pieces.every(function(piece, i) {
+    dl.on('ready', function () {
+      var seeding = dl.torrent.pieces.every(function (piece, i) {
         return dl.bitfield.get(i)
       })
       if (!seeding) {
@@ -120,11 +116,11 @@ if (source === 'create') {
       } else {
         console.log('Verified files successfully!')
       }
-      function status() {
+      function status () {
         log(
           'Seeding ' + filename + '\n' +
-          'Connected to '+dl.swarm.wires.reduce(notChoked, 0)+'/'+dl.swarm.wires.length+' peers\n'+
-          'Uploaded ' + bytes(dl.swarm.uploaded) + ' ('+ bytes(dl.swarm.uploadSpeed()) +')\n'
+          'Connected to ' + dl.swarm.wires.reduce(notChoked, 0) + '/' + dl.swarm.wires.length + ' peers\n' +
+          'Uploaded ' + bytes(dl.swarm.uploaded) + ' (' + bytes(dl.swarm.uploadSpeed()) + ')\n'
         )
       }
       setInterval(status, 1000)
@@ -136,11 +132,9 @@ if (source === 'create') {
   if (!argv.path) argv.path = process.cwd()
 
   getSource(source, function (body) {
-
     var dl = torrent(body, argv)
 
-    dl.on('ready', function() {
-
+    dl.on('ready', function () {
       if (argv.peer) {
         console.log('connecting to peer', argv.peer)
         dl.connect(argv.peer)
@@ -149,13 +143,13 @@ if (source === 'create') {
       var fileCount = dl.files.length
       var timeStart = (new Date()).getTime()
       console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
-      console.log(dl.files.map(function(f){ return f.name.trim() }).join('\n'))
+      console.log(dl.files.map(function (f) { return f.name.trim() }).join('\n'))
 
-      var status = function() {
+      var status = function () {
         var down = bytes(dl.swarm.downloaded)
-        var downSpeed = bytes(dl.swarm.downloadSpeed()) +'/s'
+        var downSpeed = bytes(dl.swarm.downloadSpeed()) + '/s'
         var up = bytes(dl.swarm.uploaded)
-        var upSpeed = bytes(dl.swarm.uploadSpeed()) +'/s'
+        var upSpeed = bytes(dl.swarm.uploadSpeed()) + '/s'
         var torrentSize = dl.torrent.length
         var bytesRemaining = torrentSize - dl.swarm.downloaded
         var percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
@@ -165,7 +159,7 @@ if (source === 'create') {
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
         if (dl.swarm.downloaded > 0) {
           if (dl.swarm.downloadSpeed() > 0) {
-            var seconds = 1000;
+            var seconds = 1000
             var timeNow = (new Date()).getTime()
             var timeElapsed = timeNow - timeStart
             var timeRemaining = (((timeElapsed / dl.swarm.downloaded) * bytesRemaining) / seconds).toPrecision(6)
@@ -174,36 +168,36 @@ if (source === 'create') {
             timeRemaining = 'Unknown time remaining'
           }
         } else {
-          timeRemaining = "Calculating"
+          timeRemaining = 'Calculating'
         }
 
         if (percentage > 100) { percentage = 100 }
 
-        for (i = 0; i < bars; i++) {
+        for (var i = 0; i < bars; i++) {
           progressBar = progressBar + '='
         }
 
         progressBar = progressBar + Array(20 + 1 - progressBar.length).join(' ')
 
         log(
-          'Connected to '+dl.swarm.wires.reduce(notChoked, 0)+'/'+dl.swarm.wires.length+' peers\n'+
-          'Downloaded '+down+' ('+downSpeed+')\n'+
-          'Uploaded '+up+ ' ('+upSpeed+')\n'+
-          'Torrent Size '+bytes(torrentSize)+'\n\n'+
-          'Complete: '+ percentage+'%\n'+
-          '['+progressBar+']\n'+
-          '0%    25   50   75   100%\n\n'+timeRemaining + '\n'
+          'Connected to ' + dl.swarm.wires.reduce(notChoked, 0) + '/' + dl.swarm.wires.length + ' peers\n' +
+          'Downloaded ' + down + ' (' + downSpeed + ')\n' +
+          'Uploaded ' + up + ' (' + upSpeed + ')\n' +
+          'Torrent Size ' + bytes(torrentSize) + '\n\n' +
+          'Complete: ' + percentage + '%\n' +
+          '[' + progressBar + ']\n' +
+          '0%    25   50   75   100%\n\n' + timeRemaining + '\n'
         )
       }
 
-      var interval = setInterval(status, 500)
+      setInterval(status, 500)
       status()
     })
 
   })
 }
 
-function notChoked(result, wire) {
+function notChoked (result, wire) {
   return result + (wire.peerChoking ? 0 : 1)
 }
 
