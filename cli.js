@@ -30,7 +30,7 @@ if (argv.help || argv._.length === 0) {
 if (argv.quiet) log = function () {}
 
 var source = argv._.shift()
-
+var infile
 if (source === 'create') {
   var dir = argv._.shift()
   var outfile = argv.outfile
@@ -65,7 +65,7 @@ if (source === 'create') {
     }
   })
 } else if (source === 'info') {
-  var infile = argv._.shift()
+  infile = argv._.shift()
   getInfo(infile, function (parsed) {
     delete parsed.infoBuffer
     delete parsed.info.pieces
@@ -86,7 +86,7 @@ if (source === 'create') {
     }
   })
 } else if (source === 'ls' || source === 'list') {
-  var infile = argv._.shift()
+  infile = argv._.shift()
   getInfo(infile, function (parsed) {
     parsed.files.forEach(function (file) {
       var prefix = ''
@@ -101,7 +101,7 @@ if (source === 'create') {
     })
   })
 } else if (source === 'seed') {
-  var infile = argv._.shift()
+  infile = argv._.shift()
   var filename = infile
   if (!argv.path) argv.path = process.cwd()
   getSource(infile, function (body) {
