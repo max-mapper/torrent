@@ -193,7 +193,6 @@ if (source === 'create') {
       setInterval(status, 500)
       status()
     })
-
   })
 }
 
