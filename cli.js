@@ -14,7 +14,7 @@ var humanSize = require('human-format')
 var prettySeconds = require('pretty-seconds')
 
 var argv = minimist(process.argv.slice(2), {
-  alias: { outfile: 'o' }
+  alias: { outfile: 'o', finish: 'f' }
 })
 
 if (argv.version) {
@@ -171,7 +171,12 @@ if (source === 'create') {
           timeRemaining = 'Calculating'
         }
 
-        if (percentage > 100) { percentage = 100 }
+        if (percentage > 100) { 
+          percentage = 100
+          if(argv.f) {
+            process.exit(1)
+          }
+        }
 
         for (var i = 0; i < bars; i++) {
           progressBar = progressBar + '='
