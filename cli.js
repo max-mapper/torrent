@@ -171,9 +171,9 @@ if (source === 'create') {
           timeRemaining = 'Calculating'
         }
 
-        if (percentage > 100) { 
+        if (percentage > 100) {
           percentage = 100
-          if(argv.f) {
+          if (argv.f) {
             process.exit(1)
           }
         }
