@@ -174,7 +174,7 @@ if (source === 'create') {
         if (percentage > 100) {
           percentage = 100
           if (argv.f) {
-            process.exit(1)
+            process.exit(0)
           }
         }
 
