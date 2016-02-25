@@ -134,6 +134,12 @@ if (source === 'create') {
   getSource(source, function (body) {
     var dl = torrent(body, argv)
 
+    if (argv.f) {
+      dl.on('idle', function() {
+	dl.destroy(process.exit);
+      });
+    }
+
     dl.on('ready', function () {
       if (argv.peer) {
         console.log('connecting to peer', argv.peer)
