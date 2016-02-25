@@ -14,7 +14,7 @@ var humanSize = require('human-format')
 var prettySeconds = require('pretty-seconds')
 
 var argv = minimist(process.argv.slice(2), {
-  alias: { outfile: 'o' }
+  alias: { outfile: 'o', finish: 'f' }
 })
 
 if (argv.version) {
