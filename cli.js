@@ -4,7 +4,6 @@ var minimist = require('minimist')
 var fs = require('fs')
 var log = require('single-line-log').stdout
 var bytes = require('pretty-bytes')
-
 var pkg = require('./package.json')
 var torrent = require('./')
 var createTorrent = require('create-torrent')
@@ -14,7 +13,7 @@ var humanSize = require('human-format')
 var prettySeconds = require('pretty-seconds')
 
 var argv = minimist(process.argv.slice(2), {
-  alias: { outfile: 'o' }
+  alias: { outfile: 'o', finish: 'f' }
 })
 
 if (argv.version) {
@@ -171,7 +170,7 @@ if (source === 'create') {
           timeRemaining = 'Calculating'
         }
 
-        if (percentage > 100) { percentage = 100 }
+        if (percentage > 100) percentage = 100
 
         for (var i = 0; i < bars; i++) {
           progressBar = progressBar + '='
@@ -193,6 +192,12 @@ if (source === 'create') {
       setInterval(status, 500)
       status()
     })
+
+    if (argv.f) {
+      dl.on('idle', function () {
+        process.exit(0)
+      })
+    }
   })
 }
 

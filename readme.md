@@ -36,6 +36,7 @@ torrent ls OPTIONS <torrent file>
 
     -s  Show file sizes in bytes alongside file paths.
     -h  Show file sizes in human units when `-s` is on.
+    -f, -finish  Used only for leeching, finish script after files are downloaded.
 
 ```
 
