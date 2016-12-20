@@ -14,7 +14,7 @@ var humanSize = require('human-format')
 var prettySeconds = require('pretty-seconds')
 
 var argv = minimist(process.argv.slice(2), {
-  alias: { outfile: 'o' }
+  alias: { outfile: 'o', finish: 'f' }
 })
 
 if (argv.version) {
@@ -133,6 +133,12 @@ if (source === 'create') {
 
   getSource(source, function (body) {
     var dl = torrent(body, argv)
+
+    if (argv.f) {
+      dl.on('idle', function() {
+	dl.destroy(process.exit);
+      });
+    }
 
     dl.on('ready', function () {
       if (argv.peer) {

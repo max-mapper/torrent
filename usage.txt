@@ -2,13 +2,14 @@ torrent - a pure javascript torrent program
 
 Commands:
 
-torrent            <torrent>
+torrent            <torrent> {-f}
 torrent seed       <torrent>
 torrent info       <torrent>
 torrent ls         <torrent>
 torrent create     <directory OR file> {-o outfile.torrent}
 
 `<torrent>` above can be a magnet link, a path to .torrent file or `-` for STDIN
+-f will exit process after finishing download (leeching mode)
 
 options for the ls command:
   -s  Show file sizes in bytes alongside file paths.
