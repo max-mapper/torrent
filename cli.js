@@ -2,6 +2,7 @@
 
 var minimist = require('minimist')
 var fs = require('fs')
+var http = require('http')
 var log = require('single-line-log').stdout
 var bytes = require('pretty-bytes')
 
@@ -202,10 +203,13 @@ function notChoked (result, wire) {
 
 function getSource (infile, cb) {
   if (/^magnet:/.test(infile)) return cb(infile)
-  var instream = !infile || infile === '-'
-    ? process.stdin
-    : fs.createReadStream(infile)
-  instream.pipe(concat(cb))
+  if (!infile || infile === '-') (process.stdin).pipe(concat(cb))
+  else if(/^http/.test(infile)) {
+  	http.get(infile, function(response) { response.pipe(concat(cb)) })
+  	.on('error', function(e) { console.error(e.stack) })
+  }
+  else if(fs.existsSync(infile)) (fs.createReadStream(infile)).pipe(concat(cb))
+
 }
 
 function getInfo (infile, cb) {
