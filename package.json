@@ -4,6 +4,7 @@
   "bin": {
     "torrent": "cli.js"
   },
+  "type": "module",
   "description": "torrent from the command line",
   "main": "index.js",
   "author": "max ogden",

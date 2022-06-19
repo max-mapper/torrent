@@ -1,13 +1,13 @@
-var torrents = require('torrent-stream')
+import torrents from "torrent-stream";
 
-module.exports = function (source, opts) {
-  var engine = torrents(source, opts)
+export default function (source, opts) {
+  const engine = torrents(source, opts);
 
-  engine.on('ready', function () {
+  engine.on("ready", function () {
     engine.files.forEach(function (file) {
-      file.select()
-    })
-  })
+      file.select();
+    });
+  });
 
-  return engine
-}
+  return engine;
+};

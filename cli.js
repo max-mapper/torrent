@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
-var minimist = require('minimist')
-var fs = require('fs')
-var log = require('single-line-log').stdout
-var bytes = require('pretty-bytes')
+import minimist from 'minimist';
+import fs from 'fs';
+import log from 'single-line-log';
+import bytes from 'pretty-bytes';
 
-var pkg = require('./package.json')
-var torrent = require('./')
-var createTorrent = require('create-torrent')
-var parseTorrent = require('parse-torrent')
-var concat = require('concat-stream')
-var humanSize = require('human-format')
-var prettySeconds = require('pretty-seconds')
+import pkg from './package.json';
+import torrent from './';
+import createTorrent from 'create-torrent';
+import parseTorrent from 'parse-torrent';
+import concat from 'concat-stream';
+import humanSize from 'human-format';
+import prettySeconds from 'pretty-seconds';
 
-var argv = minimist(process.argv.slice(2), {
+let argv = minimist(process.argv.slice(2), {
   alias: { outfile: 'o' }
 })
 
@@ -27,13 +27,13 @@ if (argv.help || argv._.length === 0) {
   process.exit(0)
 }
 
-if (argv.quiet) log = function () {}
+if (argv.quiet) log.stdout = function () {}
 
-var source = argv._.shift()
-var infile
+let source = argv._.shift()
+let infile
 if (source === 'create') {
-  var dir = argv._.shift()
-  var outfile = argv.outfile
+  let dir = argv._.shift()
+  let outfile = argv.outfile
   if (outfile === '-') outfile = null
 
   if (outfile && fs.existsSync(outfile)) {
@@ -41,7 +41,7 @@ if (source === 'create') {
     process.exit(1)
   }
 
-  var opts = {}
+  let opts = {}
   if (argv.tracker) {
     if (typeof argv.tracker === 'string') opts.announceList = [[argv.tracker]]
     else opts.announceList = argv.tracker.map(function (t) { return [t] })
@@ -89,7 +89,7 @@ if (source === 'create') {
   infile = argv._.shift()
   getInfo(infile, function (parsed) {
     parsed.files.forEach(function (file) {
-      var prefix = ''
+      let prefix = ''
       if (argv.s && argv.h) {
         prefix = humanSize(file.length).replace(/(\d)B$/, '$1 B')
         prefix = Array(10 - prefix.length).join(' ') + prefix + ' '
@@ -102,12 +102,12 @@ if (source === 'create') {
   })
 } else if (source === 'seed') {
   infile = argv._.shift()
-  var filename = infile
+  let filename = infile
   if (!argv.path) argv.path = process.cwd()
   getSource(infile, function (body) {
-    var dl = torrent(body, argv)
+    let dl = torrent(body, argv)
     dl.on('ready', function () {
-      var seeding = dl.torrent.pieces.every(function (piece, i) {
+      let seeding = dl.torrent.pieces.every(function (piece, i) {
         return dl.bitfield.get(i)
       })
       if (!seeding) {
@@ -132,7 +132,7 @@ if (source === 'create') {
   if (!argv.path) argv.path = process.cwd()
 
   getSource(source, function (body) {
-    var dl = torrent(body, argv)
+    let dl = torrent(body, argv)
 
     dl.on('ready', function () {
       if (argv.peer) {
@@ -140,29 +140,29 @@ if (source === 'create') {
         dl.connect(argv.peer)
       }
 
-      var fileCount = dl.files.length
-      var timeStart = (new Date()).getTime()
+      let fileCount = dl.files.length
+      let timeStart = (new Date()).getTime()
       console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
       console.log(dl.files.map(function (f) { return f.name.trim() }).join('\n'))
 
-      var status = function () {
-        var down = bytes(dl.swarm.downloaded)
-        var downSpeed = bytes(dl.swarm.downloadSpeed()) + '/s'
-        var up = bytes(dl.swarm.uploaded)
-        var upSpeed = bytes(dl.swarm.uploadSpeed()) + '/s'
-        var torrentSize = dl.torrent.length
-        var bytesRemaining = torrentSize - dl.swarm.downloaded
-        var percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
-        var progressBar = ''
-        var bars = ~~((percentage) / 5)
+      let status = function () {
+        let down = bytes(dl.swarm.downloaded)
+        let downSpeed = bytes(dl.swarm.downloadSpeed()) + '/s'
+        let up = bytes(dl.swarm.uploaded)
+        let upSpeed = bytes(dl.swarm.uploadSpeed()) + '/s'
+        let torrentSize = dl.torrent.length
+        let bytesRemaining = torrentSize - dl.swarm.downloaded
+        let percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
+        let progressBar = ''
+        let bars = ~~((percentage) / 5)
 
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
         if (dl.swarm.downloaded > 0) {
           if (dl.swarm.downloadSpeed() > 0) {
-            var seconds = 1000
-            var timeNow = (new Date()).getTime()
-            var timeElapsed = timeNow - timeStart
-            var timeRemaining = (((timeElapsed / dl.swarm.downloaded) * bytesRemaining) / seconds).toPrecision(6)
+            let seconds = 1000
+            let timeNow = (new Date()).getTime()
+            let timeElapsed = timeNow - timeStart
+            let timeRemaining = (((timeElapsed / dl.swarm.downloaded) * bytesRemaining) / seconds).toPrecision(6)
             timeRemaining = 'Estimated ' + prettySeconds(~~timeRemaining) + ' remaining'
           } else {
             timeRemaining = 'Unknown time remaining'
@@ -173,7 +173,7 @@ if (source === 'create') {
 
         if (percentage > 100) { percentage = 100 }
 
-        for (var i = 0; i < bars; i++) {
+        for (let i = 0; i < bars; i++) {
           progressBar = progressBar + '='
         }
 
@@ -202,7 +202,7 @@ function notChoked (result, wire) {
 
 function getSource (infile, cb) {
   if (/^magnet:/.test(infile)) return cb(infile)
-  var instream = !infile || infile === '-'
+  let instream = !infile || infile === '-'
     ? process.stdin
     : fs.createReadStream(infile)
   instream.pipe(concat(cb))
@@ -211,7 +211,7 @@ function getSource (infile, cb) {
 function getInfo (infile, cb) {
   getSource(infile, function (body) {
     try {
-      var parsed = parseTorrent(body)
+      let parsed = parseTorrent(body)
     } catch (err) {
       console.error(err.stack)
       process.exit(1)
