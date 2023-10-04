@@ -10,6 +10,7 @@
   "license": "BSD-3-Clause",
   "preferGlobal": true,
   "dependencies": {
+    "chalk": "^3.0.0",
     "concat-stream": "^1.4.6",
     "create-torrent": "^3.7.1",
     "human-format": "^0.1.3",
